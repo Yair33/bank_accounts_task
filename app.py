@@ -41,11 +41,17 @@ class AccountManager:
 # Singleton instance
 account_manager = AccountManager()
 
-@app.route('/accounts', methods=['POST'])
+@app.route('/accounts/create', methods=['POST'])
 def create_account():
     data = request.get_json()
     balance = data.get("balance", 0.0)
-    account = account_manager.create_account(balance=balance)
+    
+    # Generate a new unique account number
+    account_number = str(uuid.uuid4())[:8]  # Shorten UUID for readability
+    
+    # Create the account
+    account = account_manager.create_account(account_number, balance)
+    
     return jsonify({"account_number": account.account_number, "balance": account.balance}), 201
 
 @app.route('/accounts/<account_number>/balance', methods=['GET'])
